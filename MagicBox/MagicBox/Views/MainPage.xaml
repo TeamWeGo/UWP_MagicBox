@@ -18,8 +18,7 @@
     <Grid
         x:Name="ContentArea"
         Margin="{StaticResource MediumLeftRightMargin}">
-        <Grid
-            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+        <Grid>
 
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="VisualStateGroup">
@@ -48,7 +47,7 @@
                 <RowDefinition Height="185*" />
                 <RowDefinition Height="28*" />
             </Grid.RowDefinitions>
-            <Grid  Grid.Column="0" Grid.Row="0" Name="leftView" >
+            <Grid  Grid.Column="0" Grid.Row="0" Name="leftView" Margin="15,15,15,15">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="8*"/>
@@ -62,7 +61,7 @@
                     <Button x:Name="searchButton" Click="SearchClick" Grid.Column="1" Content="search" HorizontalAlignment="Center" MinWidth="100" Width="80" Height="36" />
                 </Grid>
                 <StackPanel Grid.Row="1" x:Name="list">
-                    <ListView x:Name="listView" MaxHeight="400"  VerticalAlignment="Top" IsItemClickEnabled="True" ItemClick="ListViewItemClick" ItemsSource="{x:Bind ViewModel.AllItems}">
+                    <ListView  x:Name="listView" MaxHeight="400"  VerticalAlignment="Top" IsItemClickEnabled="True" ItemClick="ListViewItemClick" ItemsSource="{x:Bind ViewModel.AllItems}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="md:Model">
                                 <UserControl>
@@ -80,8 +79,8 @@
                                                 <RowDefinition Height="5*" />
                                                 <RowDefinition Height="5*" />
                                             </Grid.RowDefinitions>
-                                            <TextBlock x:Name="musicTextBlockListView" Grid.Row="1" Text="{x:Bind musicName, Mode=OneWay}"/>
-                                            <TextBlock x:Name="dateTextBlockListView" Grid.Row="2" Text="{x:Bind date, Converter={StaticResource DateToString}, Mode=OneWay}" />
+                                            <TextBlock x:Name="musicTextBlockListView" Grid.Row="1" Text="{x:Bind musicName, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                            <TextBlock x:Name="dateTextBlockListView" Grid.Row="2" Text="{x:Bind date, Converter={StaticResource DateToString}, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}" />
                                         </Grid>
                                     </Grid>
                                 </UserControl>
@@ -99,9 +98,10 @@
                 </StackPanel>
             </Grid>
 
-            <Grid Grid.Column="1" Grid.Row="0" x:Name="InlineViewGrid">
+            <Grid Grid.Column="1" Grid.Row="0" x:Name="InlineViewGrid" Margin="15,15,15,15">
                 <Grid.RowDefinitions >
                     <RowDefinition Height="2*"/>
+                    <RowDefinition Height="1*"/>
                     <RowDefinition Height="6*" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
@@ -144,14 +144,14 @@
                             <RowDefinition Height="2*"/>
                             <RowDefinition Height="1*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="moodTextBlockDetail" Grid.Row="1" Text="happy" />
-                        <TextBlock x:Name="feedbackTextBlock"  Grid.Row="2"  Text="feedback" HorizontalAlignment="Stretch"/>
+                        <TextBlock x:Name="moodTextBlockDetail" Grid.Row="1" Text="happy" Style="{StaticResource BodyTextBlockStyle}"/>
                         <DatePicker x:Name="dateDatePickerDetail" Grid.Row="3" IsEnabled="false" />
                     </Grid>
                 </Grid>
-                <TextBox x:Name="diaryTextBoxDetail"  Grid.Row="1" PlaceholderText="Diary" TextWrapping="Wrap" FontFamily="Microsoft YaHei" FontSize="36" BorderThickness="0,0,0,0" FocusVisualSecondaryBrush="Black" />
+                <TextBlock x:Name="feedbackTextBlock"  Grid.Row="1"  Text="feedback" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" FontFamily="KaiTi" Style="{StaticResource BodyTextBlockStyle}"/>
+                <TextBox x:Name="diaryTextBoxDetail" Grid.Row="2" PlaceholderText="Diary" TextWrapping="Wrap" FontFamily="KaiTi" FontSize="36" BorderThickness="0,0,0,0" FocusVisualSecondaryBrush="Black" Style="{StaticResource TransparentBackgroundTextBoxStyle}"/>
             </Grid>
-            <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid Grid.Row="1" Grid.ColumnSpan="2" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.3*"/>
                     <ColumnDefinition Width="1*"/>
@@ -166,8 +166,8 @@
                         <ImageBrush x:Name="coverImage" ImageSource="/Assets/cover.jpg"  />
                     </Ellipse.Fill>
                 </Ellipse>
-                <TextBlock x:Name="musicNameTextBlock" Grid.Column="2" Text="music name" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                <MediaElement Grid.Column="3" x:Name="mediaElement" AutoPlay="True" AreTransportControlsEnabled="True"/>
+                <TextBlock x:Name="musicNameTextBlock" Grid.Column="2" Text="music name" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}"/>
+                <MediaElement Grid.Column="3" x:Name="mediaElement" AutoPlay="True" AreTransportControlsEnabled="True" />
                 <AppBarButton Click="SelectClick" Grid.Column="4" Icon="OpenFile" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <AppBarButton Click="DeleteClick" Grid.Column="5" Icon="Delete" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Grid>

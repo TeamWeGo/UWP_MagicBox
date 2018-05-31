@@ -115,7 +115,6 @@ namespace MagicBox.Views
                     moodTextBlockDetail.Text, diaryTextBoxDetail.Text, feedbackTextBlock.Text, musicNameTextBlock.Text);
                 var message = new MessageDialog("更新成功！").ShowAsync();
                 ViewModel.SelectedItem = null;
-                Frame.Navigate(typeof(MainPage));
             }
             else if(createButton.Content.ToString() == "Create")
             {
@@ -123,7 +122,6 @@ namespace MagicBox.Views
                 ViewModel.AddItem(mediaElement.Source, (photoImageDetail.Source as BitmapImage).UriSource,
                     moodTextBlockDetail.Text, diaryTextBoxDetail.Text, feedbackTextBlock.Text, musicNameTextBlock.Text);
                 var message = new MessageDialog("创建成功！").ShowAsync();
-                Frame.Navigate(typeof(MainPage));
             }
         }
 
@@ -273,6 +271,7 @@ namespace MagicBox.Views
                 if(contentString =="[]")
                 {
                     moodTextBlockDetail.Text = "detect emotion fail";
+                    feedback();
                     return;
                 }
                 var face = Data[0];
@@ -293,7 +292,38 @@ namespace MagicBox.Views
                 }
                 string[] emotions = new string[8] { "anger", "contempt", "disgust", "fear", "happiness", "neutral", "sadness", "surprise" };
                 moodTextBlockDetail.Text = emotions[flag];
+                feedback();
             }
+        }
+
+        private void feedback()
+        {
+            string[] feedback = new string[20]
+            {
+                "人一生至少要有两次冲动，一次奋不顾身的爱情，一次说走就走的旅行。",
+                "最幸福的事情就是无忧无虑陪着自己心爱的人与世无争。",
+                "如果你懂得珍惜，你会发现你获得的越来越多。",
+                "你不尝试着做些能力之外的事情，就永远无法成长。",
+                "深谙世故却不世故，才是最善良的成熟。",
+                "总是需要一些温暖。哪怕是一点点自以为是的纪念。",
+                "想念只是一种仪式，真正的记忆与生俱来。",
+                "在这个世上，只有真正快乐的男人、才能带给女人真正的快乐。",
+                "当金钱站起来说话时，所有的真理都沉默了。",
+                "幸福是比较级，要有东西垫底才感觉的到。",
+                "你可以坚持自己的理想，但不需固执自己的想法。",
+                "人犯错误，多半是在该用真情时太过动脑筋，而在该用脑筋时又太感情用事。",
+                "生活不是等待风暴过去，而是学会在雨中慢舞。",
+                "有时候你以为天要塌下来了，其实是自己站歪了。",
+                "那些繁华哀伤终成过往，请不要失望，平凡是为了最美的荡气回肠。",
+                "怜悯是一笔借款，为小心起见，还是不要滥用为好。",
+                "智者顺时而谋,愚者逆时而动。",
+                "人若在面临抉择而无法取舍的时候,应该选择自己尚未经验过的那一个。",
+                "淡定是一种人生涵养,纯真是一种性格使然。",
+                "蝴蝶变成了花,不用再以不停的飞翔表明自己自由,平淡安静的留守也是一种幸福的忧愁"
+            };
+            Random rand = new Random();
+            int random = rand.Next(0, 19);
+            feedbackTextBlock.Text = feedback[random];
         }
     }
 }

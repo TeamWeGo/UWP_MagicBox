@@ -8,15 +8,16 @@
     xmlns:helpers="using:MagicBox.Helpers"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:fcu ="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,5)"
+    xmlns:cu ="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract,5)"
     mc:Ignorable="d">
 
-    <NavigationView
+    <NavigationView cu:Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" fcu:Background="{ThemeResource SystemControlChromeMediumAcrylicWindowMediumBrush }"
         x:Name="navigationView"
         SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}"
         Header="{x:Bind ViewModel.Selected.Content, Mode=OneWay}"
-        IsSettingsVisible="True"
-        Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
-        <NavigationView.MenuItems>
+        IsSettingsVisible="True">
+        <NavigationView.MenuItems >
             <!--
             TODO WTS: Change the symbols for each item as appropriate for your app
             More on Segoe UI Symbol icons: https://docs.microsoft.com/windows/uwp/style/segoe-ui-symbol-font
@@ -40,7 +41,7 @@
                 <ic:InvokeCommandAction Command="{x:Bind ViewModel.ItemInvokedCommand}" />
             </ic:EventTriggerBehavior>
         </i:Interaction.Behaviors>
-        <Grid>
+        <Grid cu:Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" fcu:Background="{ThemeResource SystemControlChromeMediumAcrylicWindowMediumBrush }">
             <Frame x:Name="shellFrame" />
         </Grid>
     </NavigationView>
