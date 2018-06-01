@@ -305,8 +305,15 @@ namespace MagicBox.Views
 
                 // Execute the REST API call.
                 moodTextBlockDetail.Text = "正在识别表情……";
-                response = await client.PostAsync(uri, content);
-
+                try
+                {
+                    response = await client.PostAsync(uri, content);
+                }
+                catch(Exception exception)
+                {
+                    moodTextBlockDetail.Text = "离线状态无法连接服务器";
+                    return;
+                }
                 // Get the JSON response.
                 string contentString = await response.Content.ReadAsStringAsync();
 
@@ -496,6 +503,8 @@ namespace MagicBox.Views
             catch (Exception exception)
             {
                 httpResponseBody = "ERROR " + exception.HResult.ToString("X") + "Message " + exception.Message;
+                weather.Text = "离线模式";
+                return;
             }
 
             JsonReader jsonReader = new JsonTextReader(new StringReader(httpResponseBody));

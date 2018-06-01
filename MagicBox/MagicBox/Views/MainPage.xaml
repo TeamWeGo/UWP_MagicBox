@@ -155,8 +155,8 @@
                             <RowDefinition Height="2*"/>
                             <RowDefinition Height="1*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="moodTextBlockDetail" Grid.Row="1" Text="happy" Style="{StaticResource BodyTextBlockStyle}"/>
-                        <TextBlock x:Name="weather" Grid.Row="2"></TextBlock>
+                        <TextBlock x:Name="weather" Grid.Row="1"></TextBlock>
+                        <TextBlock x:Name="moodTextBlockDetail" Grid.Row="2" Text="happy" Style="{StaticResource BodyTextBlockStyle}"/>
                         <DatePicker x:Name="dateDatePickerDetail" Grid.Row="3" IsEnabled="false" />
                     </Grid>
                 </Grid>
