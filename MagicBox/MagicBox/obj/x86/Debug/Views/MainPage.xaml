@@ -18,8 +18,7 @@
     <Grid x:ConnectionId='2'
         x:Name="ContentArea"
         Margin="{StaticResource MediumLeftRightMargin}">
-        <Grid
-            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+        <Grid>
 
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:ConnectionId='3' x:Name="VisualStateGroup">
@@ -48,7 +47,7 @@
                 <RowDefinition Height="185*" />
                 <RowDefinition Height="28*" />
             </Grid.RowDefinitions>
-            <Grid x:ConnectionId='6'  Grid.Column="0" Grid.Row="0" Name="leftView" >
+            <Grid x:ConnectionId='6'  Grid.Column="0" Grid.Row="0" Name="leftView" Margin="15,15,15,15">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="8*"/>
@@ -62,7 +61,7 @@
                     <Button x:ConnectionId='31' x:Name="searchButton"                     Grid.Column="1" Content="search" HorizontalAlignment="Center" MinWidth="100" Width="80" Height="36" />
                 </Grid>
                 <StackPanel x:ConnectionId='21' Grid.Row="1" x:Name="list">
-                    <ListView x:ConnectionId='22' x:Name="listView" MaxHeight="400"  VerticalAlignment="Top" IsItemClickEnabled="True"                                                                        >
+                    <ListView x:ConnectionId='22'  x:Name="listView" MaxHeight="400"  VerticalAlignment="Top" IsItemClickEnabled="True"                                                                        >
                         <ListView.ItemTemplate>
                             <DataTemplate                      >
                                 <UserControl x:ConnectionId='26'>
@@ -80,8 +79,8 @@
                                                 <RowDefinition Height="5*" />
                                                 <RowDefinition Height="5*" />
                                             </Grid.RowDefinitions>
-                                            <TextBlock x:ConnectionId='28' x:Name="musicTextBlockListView" Grid.Row="1"                                       />
-                                            <TextBlock x:ConnectionId='29' x:Name="dateTextBlockListView" Grid.Row="2"                                                                            />
+                                            <TextBlock x:ConnectionId='28' x:Name="musicTextBlockListView" Grid.Row="1"                                        Style="{StaticResource BodyTextBlockStyle}"/>
+                                            <TextBlock x:ConnectionId='29' x:Name="dateTextBlockListView" Grid.Row="2"                                                                            Style="{StaticResource BodyTextBlockStyle}" />
                                         </Grid>
                                     </Grid>
                                 </UserControl>
@@ -99,9 +98,10 @@
                 </StackPanel>
             </Grid>
 
-            <Grid x:ConnectionId='7' Grid.Column="1" Grid.Row="0" x:Name="InlineViewGrid">
+            <Grid x:ConnectionId='7' Grid.Column="1" Grid.Row="0" x:Name="InlineViewGrid" Margin="15,15,15,15">
                 <Grid.RowDefinitions >
                     <RowDefinition Height="2*"/>
+                    <RowDefinition Height="1*"/>
                     <RowDefinition Height="6*" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
@@ -109,7 +109,7 @@
                         <ColumnDefinition Width="5*"/>
                         <ColumnDefinition Width="5*" />
                     </Grid.ColumnDefinitions>
-                    <Button x:ConnectionId='14'  x:Name="photoButton"   Grid.Column="0"  Background="AliceBlue" >
+                    <Button x:ConnectionId='15'  x:Name="photoButton"   Grid.Column="0"  Background="AliceBlue" >
                         <Button.Content>
                             <Image x:ConnectionId='18' x:Name="photoImageDetail"  Source="/Assets/example.jpg" />
                         </Button.Content>
@@ -144,14 +144,14 @@
                             <RowDefinition Height="2*"/>
                             <RowDefinition Height="1*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:ConnectionId='15' x:Name="moodTextBlockDetail" Grid.Row="1" Text="happy" />
-                        <TextBlock x:ConnectionId='16' x:Name="feedbackTextBlock"  Grid.Row="2"  Text="feedback" HorizontalAlignment="Stretch"/>
+                        <TextBlock x:ConnectionId='16' x:Name="moodTextBlockDetail" Grid.Row="1" Text="happy" Style="{StaticResource BodyTextBlockStyle}"/>
                         <DatePicker x:ConnectionId='17' x:Name="dateDatePickerDetail" Grid.Row="3" IsEnabled="false" />
                     </Grid>
                 </Grid>
-                <TextBox x:ConnectionId='13' x:Name="diaryTextBoxDetail"  Grid.Row="1" PlaceholderText="Diary" TextWrapping="Wrap" FontFamily="Microsoft YaHei" FontSize="36" BorderThickness="0,0,0,0" FocusVisualSecondaryBrush="Black" />
+                <TextBlock x:ConnectionId='13' x:Name="feedbackTextBlock"  Grid.Row="1"  Text="feedback" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" FontFamily="KaiTi" Style="{StaticResource BodyTextBlockStyle}"/>
+                <TextBox x:ConnectionId='14' x:Name="diaryTextBoxDetail" Grid.Row="2" PlaceholderText="Diary" TextWrapping="Wrap" FontFamily="KaiTi" FontSize="36" BorderThickness="0,0,0,0" FocusVisualSecondaryBrush="Black" Style="{StaticResource TransparentBackgroundTextBoxStyle}"/>
             </Grid>
-            <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid Grid.Row="1" Grid.ColumnSpan="2" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.3*"/>
                     <ColumnDefinition Width="1*"/>
@@ -166,8 +166,8 @@
                         <ImageBrush x:ConnectionId='12' x:Name="coverImage" ImageSource="/Assets/cover.jpg"  />
                     </Ellipse.Fill>
                 </Ellipse>
-                <TextBlock x:ConnectionId='8' x:Name="musicNameTextBlock" Grid.Column="2" Text="music name" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                <MediaElement x:ConnectionId='9' Grid.Column="3" x:Name="mediaElement" AutoPlay="True" AreTransportControlsEnabled="True"/>
+                <TextBlock x:ConnectionId='8' x:Name="musicNameTextBlock" Grid.Column="2" Text="music name" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}"/>
+                <MediaElement x:ConnectionId='9' Grid.Column="3" x:Name="mediaElement" AutoPlay="True" AreTransportControlsEnabled="True" />
                 <AppBarButton x:ConnectionId='10'                     Grid.Column="4" Icon="OpenFile" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <AppBarButton x:ConnectionId='11'                     Grid.Column="5" Icon="Delete" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Grid>

@@ -12935,11 +12935,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\zhangziquan\\source\\repos\\MagicBox\\MagicBox\\MagicBox\\MagicBox.csproj",
+      "projectUniqueName": "C:\\Users\\zhangziquan\\Source\\Repos\\UWP_MagicBox\\MagicBox\\MagicBox\\MagicBox.csproj",
       "projectName": "MagicBox",
-      "projectPath": "C:\\Users\\zhangziquan\\source\\repos\\MagicBox\\MagicBox\\MagicBox\\MagicBox.csproj",
+      "projectPath": "C:\\Users\\zhangziquan\\Source\\Repos\\UWP_MagicBox\\MagicBox\\MagicBox\\MagicBox.csproj",
       "packagesPath": "C:\\Users\\zhangziquan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\zhangziquan\\source\\repos\\MagicBox\\MagicBox\\MagicBox\\obj\\",
+      "outputPath": "C:\\Users\\zhangziquan\\Source\\Repos\\UWP_MagicBox\\MagicBox\\MagicBox\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "fallbackFolders": [

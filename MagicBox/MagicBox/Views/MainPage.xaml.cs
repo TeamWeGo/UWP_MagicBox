@@ -260,6 +260,7 @@ namespace MagicBox.Views
                     new MediaTypeHeaderValue("application/octet-stream");
 
                 // Execute the REST API call.
+                moodTextBlockDetail.Text = "正在识别表情……";
                 response = await client.PostAsync(uri, content);
 
                 // Get the JSON response.
@@ -298,8 +299,48 @@ namespace MagicBox.Views
 
         private void feedback()
         {
-            string[] feedback = new string[20]
+            String emotion = moodTextBlockDetail.Text;
+
+            string[] positive = new string[]
             {
+                "也许有一天，你发觉日子特别的艰难，那可能是这次的收获特别的巨大。",
+                "生活总会给你另一个机会，这个机会叫明天。",
+                "遥不可及的并非是十年之后，而是今天之前。触手可及的就是明天，愿一觉醒来，又是全新的自己。",
+                "最幸福的事情就是无忧无虑陪着自己心爱的人与世无争。",
+                "你不尝试着做些能力之外的事情，就永远无法成长。",
+                "深谙世故却不世故，才是最善良的成熟。",
+                "智者顺时而谋,愚者逆时而动。",
+                "人若在面临抉择而无法取舍的时候,应该选择自己尚未经验过的那一个。",
+                "淡定是一种人生涵养,纯真是一种性格使然。",
+                "蝴蝶变成了花,不用再以不停的飞翔表明自己自由,平淡安静的留守也是一种幸福的忧愁"
+            };
+
+            String[] passive = new string[]
+            {
+                "积极向上的人总是把苦难化为积极向上的动力。",
+                "当你感到悲哀痛苦时，最好是去学些什么东西。学习会使你永远立于不败之地。",
+                "世上只有一种英雄主义，就是在认清生活真相之后依然热爱生活。",
+                "付出不一定有收获，努力了就值得了。",
+                "做一个精彩的自己，跟着自己的直觉走，别怕失去，别怕失败，别怕路远，做了才有对错，经历才有回忆。",
+                "人一生至少要有两次冲动，一次奋不顾身的爱情，一次说走就走的旅行。",
+                "你不尝试着做些能力之外的事情，就永远无法成长。",
+                "深谙世故却不世故，才是最善良的成熟。",
+                "总是需要一些温暖。哪怕是一点点自以为是的纪念。",
+                "想念只是一种仪式，真正的记忆与生俱来。",
+                "幸福是比较级，要有东西垫底才感觉的到。",
+                "你可以坚持自己的理想，但不需固执自己的想法。",
+                "生活不是等待风暴过去，而是学会在雨中慢舞。",
+                "有时候你以为天要塌下来了，其实是自己站歪了。",
+                "那些繁华哀伤终成过往，请不要失望，平凡是为了最美的荡气回肠。",
+                "人若在面临抉择而无法取舍的时候,应该选择自己尚未经验过的那一个。",
+                "蝴蝶变成了花,不用再以不停的飞翔表明自己自由,平淡安静的留守也是一种幸福的忧愁"
+            };
+
+            String[] neutral = new string[]
+            {
+                "人生就有许多这样的奇迹，看似比登天还难的事，有时轻而易举就可以做到，其中的差别就在于非凡的信念。",
+                "在等待的日子里，刻苦读书，谦卑做人，养得深根，日后才能枝叶茂盛。",
+                "你今天的努力，是幸运的伏笔。当下的付出，是明日的花开。",
                 "人一生至少要有两次冲动，一次奋不顾身的爱情，一次说走就走的旅行。",
                 "最幸福的事情就是无忧无虑陪着自己心爱的人与世无争。",
                 "如果你懂得珍惜，你会发现你获得的越来越多。",
@@ -321,8 +362,21 @@ namespace MagicBox.Views
                 "淡定是一种人生涵养,纯真是一种性格使然。",
                 "蝴蝶变成了花,不用再以不停的飞翔表明自己自由,平淡安静的留守也是一种幸福的忧愁"
             };
+            String []feedback = null;
+            if (emotion == "happiness")
+            {
+                feedback = positive;
+            }
+            else if(emotion == "sadness" || emotion == "fead")
+            {
+                feedback = passive;
+            }
+            else
+            {
+                feedback = neutral;
+            }
             Random rand = new Random();
-            int random = rand.Next(0, 19);
+            int random = rand.Next(0, feedback.Length-1);
             feedbackTextBlock.Text = feedback[random];
         }
     }

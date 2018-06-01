@@ -58,6 +58,7 @@ namespace MagicBox.Views
                 {
                     App.userName = userName;
                     Frame.Navigate(typeof(MainPage));
+                    
                 }
                 else
                 {
