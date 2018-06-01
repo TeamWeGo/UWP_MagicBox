@@ -6,7 +6,6 @@ using MagicBox.ViewModels;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using MagicBox.Helpers;
 
 namespace MagicBox.Views
 {

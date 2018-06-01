@@ -1,79 +1,80 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-
+using System.Xml.Linq;
 using MagicBox.Activation;
 using MagicBox.Helpers;
 
 using Windows.ApplicationModel.Activation;
+using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
 
 namespace MagicBox.Services
 {
-    internal partial class LiveTileService : ActivationHandler<LaunchActivatedEventArgs>
+    internal partial class LiveTileService /*: ActivationHandler<LaunchActivatedEventArgs>*/
     {
-        private const string QueueEnabledKey = "LiveTileNotificationQueueEnabled";
 
-        public async Task EnableQueueAsync()
+        static public void SetBadgeCountOnTile(int count)
         {
-            var queueEnabled = await ApplicationData.Current.LocalSettings.ReadAsync<bool>(QueueEnabledKey);
-            if (!queueEnabled)
-            {
-                TileUpdateManager.CreateTileUpdaterForApplication().EnableNotificationQueue(true);
-                await ApplicationData.Current.LocalSettings.SaveAsync(QueueEnabledKey, true);
-            }
+            // Update the badge on the real tile
+            XmlDocument badgeXml = BadgeUpdateManager.GetTemplateContent(BadgeTemplateType.BadgeNumber);
+
+            XmlElement badgeElement = (XmlElement)badgeXml.SelectSingleNode("/badge");
+            badgeElement.SetAttribute("value", count.ToString());
+
+            BadgeNotification badge = new BadgeNotification(badgeXml);
+            BadgeUpdateManager.CreateBadgeUpdaterForApplication().Update(badge);
         }
 
-        public void UpdateTile(TileNotification notification)
+        public static Windows.Data.Xml.Dom.XmlDocument CreateTiles(PrimaryTile primaryTile)
         {
-            TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
-        }
+            XDocument xDoc = new XDocument(
+                new XElement("tile", new XAttribute("version", 3),
+                    new XElement("visual",
+                        // Small Tile
+                        new XElement("binding", new XAttribute("branding", primaryTile.branding), new XAttribute("displayName", primaryTile.appName), new XAttribute("template", "TileSmall"),
+                        new XElement("image", new XAttribute("placement", "background"), new XAttribute("src", primaryTile.uri)),
+                        new XElement("group",
+                            new XElement("subgroup",
+                                new XElement("text", primaryTile.musicName, new XAttribute("hint-style", "caption")),
+                                new XElement("text", primaryTile.time, new XAttribute("hint-style", "captionsubtle"), new XAttribute("hint-wrap", true), new XAttribute("hint-maxLines", 3))
 
-        public async Task<bool> PinSecondaryTileAsync(SecondaryTile tile, bool allowDuplicity = false)
-        {
-            if (!await IsAlreadyPinnedAsync(tile) || allowDuplicity)
-            {
-                return await tile.RequestCreateAsync();
-            }
+                                )
+                            )
+                        ),
 
-            return false;
-        }
+                        // Medium Tile
+                        new XElement("binding", new XAttribute("branding", primaryTile.branding), new XAttribute("displayName", primaryTile.appName), new XAttribute("template", "TileMedium"),
+                        new XElement("image", new XAttribute("placement", "background"), new XAttribute("src", primaryTile.uri)),
+                        new XElement("group",
+                                new XElement("subgroup",
+                                    new XElement("text", primaryTile.musicName, new XAttribute("hint-style", "caption")),
+                                    new XElement("text", primaryTile.time, new XAttribute("hint-style", "captionsubtle"), new XAttribute("hint-wrap", true), new XAttribute("hint-maxLines", 3))
+                                )
+                            )
+                        ),
 
-        private async Task<bool> IsAlreadyPinnedAsync(SecondaryTile tile)
-        {
-            var secondaryTiles = await SecondaryTile.FindAllAsync();
-            return secondaryTiles.Any(t => t.Arguments == tile.Arguments);
-        }
+                        // Wide Tile
+                        new XElement("binding", new XAttribute("branding", primaryTile.branding), new XAttribute("displayName", primaryTile.appName), new XAttribute("template", "TileWide"),
+                        new XElement("image", new XAttribute("placement", "background"), new XAttribute("src", primaryTile.uri)),
+                        new XElement("group",
+                            new XElement("subgroup",
+                                new XElement("text", primaryTile.musicName, new XAttribute("hint-style", "caption")),
+                                new XElement("text", primaryTile.time, new XAttribute("hint-style", "captionsubtle"), new XAttribute("hint-wrap", true), new XAttribute("hint-maxLines", 3))
+                                //new XElement("text", primaryTile.message2, new XAttribute("hint-style", "captionsubtle"), new XAttribute("hint-wrap", true), new XAttribute("hint-maxLines", 3))
+                                )
+                            )
+                        )
 
-        protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
-        {
-            // If app is launched from a SecondaryTile, tile arguments property is contained in args.Arguments
-            // var secondaryTileArguments = args.Arguments;
+                    )
+                )
+            );
 
-            // If app is launched from a LiveTile notification update, TileContent arguments property is contained in args.TileActivatedInfo.RecentlyShownNotifications
-            // var tileUpdatesArguments = args.TileActivatedInfo.RecentlyShownNotifications;
-            await Task.CompletedTask;
-        }
-
-        protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
-        {
-            return LaunchFromSecondaryTile(args) || LaunchFromLiveTileUpdate(args);
-        }
-
-        private bool LaunchFromSecondaryTile(LaunchActivatedEventArgs args)
-        {
-            // If app is launched from a SecondaryTile, tile arguments property is contained in args.Arguments
-            // TODO WTS: Implement your own logic to determine if you can handle the SecondaryTile activation
-            return false;
-        }
-
-        private bool LaunchFromLiveTileUpdate(LaunchActivatedEventArgs args)
-        {
-            // If app is launched from a LiveTile notification update, TileContent arguments property is contained in args.TileActivatedInfo.RecentlyShownNotifications
-            // TODO WTS: Implement your own logic to determine if you can handle the LiveTile notification update activation
-            return false;
+            Windows.Data.Xml.Dom.XmlDocument xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
+            xmlDoc.LoadXml(xDoc.ToString());
+            return xmlDoc;
         }
     }
 }

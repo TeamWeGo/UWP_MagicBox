@@ -18,6 +18,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Windows.Data.Xml.Dom;
+using Windows.UI.Xaml.Navigation;
+using Windows.Networking.Connectivity;
+using System.Linq;
+using Windows.ApplicationModel.DataTransfer;
+using System.Collections.Generic;
 
 namespace MagicBox.Views
 {
@@ -32,6 +38,17 @@ namespace MagicBox.Views
         {
             InitializeComponent();
             ViewModel.initiate();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            DataTransferManager.GetForCurrentView().DataRequested += OnShareDataRequested;
+            weatherInit();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            DataTransferManager.GetForCurrentView().DataRequested -= OnShareDataRequested;
         }
 
         private void ListViewItemClick(object sender, ItemClickEventArgs e)
@@ -50,8 +67,16 @@ namespace MagicBox.Views
                 feedbackTextBlock.Text = ViewModel.SelectedItem.feedback;
                 mediaElement.Source = ViewModel.SelectedItem.songUri;
                 musicNameTextBlock.Text = ViewModel.SelectedItem.musicName;
-               /// Play.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-               // Pause.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                var tempdate = ViewModel.SelectedItem.date;
+                tempdate = tempdate.AddDays(2);
+                if (DateTimeOffset.Compare(DateTimeOffset.Now, tempdate) > 0)
+                {
+                    diaryTextBoxDetail.IsEnabled = false;
+                }
+                else
+                {
+                    diaryTextBoxDetail.IsEnabled = true;
+                }
                 createButton.Content = "Update";
             }
         }
@@ -87,7 +112,7 @@ namespace MagicBox.Views
                     //  mediaElement.Visibility = Visibility.Collapsed;
                     //    Play.Visibility = Visibility.Collapsed;
                     //   Pause.Visibility = Visibility.Visible;
-                    var filename = Guid.NewGuid().ToString();
+                    var filename = Guid.NewGuid().ToString() + ".mp3";
                     await file.CopyAsync(ApplicationData.Current.LocalFolder, filename, NameCollisionOption.ReplaceExisting);
                     Uri uri = new Uri("ms-appdata:///local/" + filename);
                     musicNameTextBlock.Text = file.Name;
@@ -99,6 +124,12 @@ namespace MagicBox.Views
 
         private void CreateClick(object sender, RoutedEventArgs e)
         {
+            if(App.userName == "")
+            {
+                var message = new MessageDialog("请先登陆！").ShowAsync();
+                Frame.Navigate(typeof(SignInPage));
+                return;
+            }
             if(diaryTextBoxDetail.Text.Trim() == String.Empty)
             {
                 var message = new MessageDialog("日记内容未填写！").ShowAsync();
@@ -123,20 +154,33 @@ namespace MagicBox.Views
                     moodTextBlockDetail.Text, diaryTextBoxDetail.Text, feedbackTextBlock.Text, musicNameTextBlock.Text);
                 var message = new MessageDialog("创建成功！").ShowAsync();
             }
+            diaryTextBoxDetail.IsEnabled = true;
         }
 
         private void CancelClick(object sender, RoutedEventArgs e)
         {
             ViewModel.SelectedItem = null;
             Frame.Navigate(typeof(MainPage));
+            diaryTextBoxDetail.IsEnabled = true;
         }
 
         private void DeleteClick(object sender, RoutedEventArgs e) {
             var message = new MessageDialog("删除日记").ShowAsync();
             diaryTextBoxDetail.Text =  "diary";
             if (ViewModel.SelectedItem.getId() != null)
-            ViewModel.deleteItem(ViewModel.SelectedItem.getId());
-   
+            {
+                ViewModel.deleteItem(ViewModel.SelectedItem.getId());
+            }
+            BitmapImage temp = new BitmapImage(new Uri("ms-appx:///Assets/example.jpg"));
+            photoImageDetail.Source = temp;
+            moodTextBlockDetail.Text = "mood";
+            dateDatePickerDetail.Date = DateTimeOffset.Now;
+            diaryTextBoxDetail.Text = "";
+            feedbackTextBlock.Text = "feedback";
+            mediaElement.Source = null;
+            musicNameTextBlock.Text = "";
+            createButton.Content = "Create";
+            diaryTextBoxDetail.IsEnabled = true;
         }
 
         private async void PhotoClick(object sender, RoutedEventArgs e)
@@ -149,7 +193,7 @@ namespace MagicBox.Views
             var picture = await picker.PickSingleFileAsync();
             if (picture != null)
             {
-                var temp = Guid.NewGuid().ToString();
+                var temp = Guid.NewGuid().ToString()+".png";
                 await picture.CopyAsync(ApplicationData.Current.LocalFolder, temp, NameCollisionOption.ReplaceExisting);
                 BitmapImage bitmapImage = new BitmapImage(new Uri("ms-appdata:///local/" + temp));
                 photoImageDetail.Source = bitmapImage;
@@ -210,7 +254,7 @@ namespace MagicBox.Views
             StorageFile picture = await captureUI.CaptureFileAsync(CameraCaptureUIMode.Photo);
             if (picture != null)
             {
-                var temp = Guid.NewGuid().ToString();
+                var temp = Guid.NewGuid().ToString()+".Jpeg";
                 await picture.CopyAsync(ApplicationData.Current.LocalFolder, temp, NameCollisionOption.ReplaceExisting);
                 BitmapImage bitmapImage = new BitmapImage(new Uri("ms-appdata:///local/" + temp));
                 photoImageDetail.Source = bitmapImage;
@@ -269,7 +313,7 @@ namespace MagicBox.Views
                 // Display the JSON response.
                 JsonReader jsonReader = new JsonTextReader(new StringReader(contentString));
                 dynamic Data = Newtonsoft.Json.JsonConvert.DeserializeObject(contentString);
-                if(contentString =="[]")
+                if (contentString == "[]")
                 {
                     moodTextBlockDetail.Text = "detect emotion fail";
                     feedback();
@@ -280,7 +324,7 @@ namespace MagicBox.Views
                 double max = 0;
                 var flag = -1;
                 var i = 0;
-                foreach(var item in emotion)
+                foreach (var item in emotion)
                 {
                     String value = (String)item;
                     double valuedata = double.Parse(value);
@@ -362,12 +406,12 @@ namespace MagicBox.Views
                 "淡定是一种人生涵养,纯真是一种性格使然。",
                 "蝴蝶变成了花,不用再以不停的飞翔表明自己自由,平淡安静的留守也是一种幸福的忧愁"
             };
-            String []feedback = null;
+            String[] feedback = null;
             if (emotion == "happiness")
             {
                 feedback = positive;
             }
-            else if(emotion == "sadness" || emotion == "fead")
+            else if (emotion == "sadness" || emotion == "fead")
             {
                 feedback = passive;
             }
@@ -376,8 +420,171 @@ namespace MagicBox.Views
                 feedback = neutral;
             }
             Random rand = new Random();
-            int random = rand.Next(0, feedback.Length-1);
+            int random = rand.Next(0, feedback.Length - 1);
             feedbackTextBlock.Text = feedback[random];
+        }
+
+        async void getWeather(string location)
+        {
+
+            string url = "http://v.juhe.cn/weather/index?cityname=" + location + "&dtype=xml&format=2&key=8f9462857e209325b1ffc655525ce3a5";
+            Uri uri = new Uri(url);
+            Windows.Web.Http.HttpClient httpClient = new Windows.Web.Http.HttpClient();
+            var httpResponseMessage = new Windows.Web.Http.HttpResponseMessage();
+            string httpResponseBody = "";
+
+            try
+            {
+                httpResponseMessage = await httpClient.GetAsync(uri);
+                httpResponseMessage.EnsureSuccessStatusCode();
+                httpResponseBody = await httpResponseMessage.Content.ReadAsStringAsync();
+            }
+            catch (Exception exception)
+            {
+                httpResponseBody = "ERROR " + exception.HResult.ToString("X") + "Message " + exception.Message;
+            }
+
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(httpResponseBody);
+            XmlNodeList list = xmlDocument.GetElementsByTagName("weather");
+            IXmlNode node = list.Item(0);
+            weather.Text = location + ":" + node.InnerText;
+
+        }
+
+        async void weatherInit()
+        {
+            var ip = "";
+
+            var hosts = NetworkInformation.GetHostNames();
+            // 筛选无线或以太网
+            var host = hosts.FirstOrDefault(h =>
+            {
+                bool isIpaddr = (h.Type == Windows.Networking.HostNameType.Ipv4) || (h.Type == Windows.Networking.HostNameType.Ipv6);
+                // 如果不是IP地址表示的名称，则忽略
+                if (isIpaddr == false)
+                {
+                    return false;
+                }
+                IPInformation ipinfo = h.IPInformation;
+                // 71表示无线，6表示以太网
+                if (ipinfo.NetworkAdapter.IanaInterfaceType == 71 || ipinfo.NetworkAdapter.IanaInterfaceType == 6)
+                {
+                    return true;
+                }
+                return false;
+            });
+            if (host != null)
+            {
+                ip = host.DisplayName; //显示IP
+            }
+
+
+            var city = "";
+            string url = "http://ip.taobao.com/service/getIpInfo.php?ip=" + ip;
+            Uri uri = new Uri(url);
+            Windows.Web.Http.HttpClient httpClient = new Windows.Web.Http.HttpClient();
+            Windows.Web.Http.HttpResponseMessage httpResponseMessage = new Windows.Web.Http.HttpResponseMessage();
+            string httpResponseBody = "";
+
+            try
+            {
+                httpResponseMessage = await httpClient.GetAsync(uri);
+                httpResponseMessage.EnsureSuccessStatusCode();
+                httpResponseBody = await httpResponseMessage.Content.ReadAsStringAsync();
+            }
+            catch (Exception exception)
+            {
+                httpResponseBody = "ERROR " + exception.HResult.ToString("X") + "Message " + exception.Message;
+            }
+
+            JsonReader jsonReader = new JsonTextReader(new StringReader(httpResponseBody));
+            while (jsonReader.Read())
+            {
+                //   Console.WriteLine(jsonReader.TokenType + "\t\t" + jsonReader.ValueType + "\t\t" + jsonReader.Value);
+                if (jsonReader.Path == "data.city")
+                {
+                    city = jsonReader.Value.ToString();
+                }
+            }
+            getWeather(city);
+        }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            dynamic select = e.OriginalSource;
+            ViewModel.SelectedItem = (Models.Model)select.DataContext;
+            if (ViewModel.SelectedItem != null)
+            {
+                photoImageDetail.Source = new BitmapImage(ViewModel.SelectedItem.photoUri);
+                moodTextBlockDetail.Text = ViewModel.SelectedItem.mood;
+                dateDatePickerDetail.Date = ViewModel.SelectedItem.date;
+                diaryTextBoxDetail.Text = ViewModel.SelectedItem.diary;
+                feedbackTextBlock.Text = ViewModel.SelectedItem.feedback;
+                mediaElement.Source = ViewModel.SelectedItem.songUri;
+                musicNameTextBlock.Text = ViewModel.SelectedItem.musicName;
+                var tempdate = ViewModel.SelectedItem.date;
+                tempdate = tempdate.AddDays(2);
+                if (DateTimeOffset.Compare(DateTimeOffset.Now,tempdate)>0)
+                {
+                    diaryTextBoxDetail.IsEnabled = false;
+                }
+                else
+                {
+                    diaryTextBoxDetail.IsEnabled = true;
+                }
+                createButton.Content = "Update";
+            }
+        }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            dynamic select = e.OriginalSource;
+            ViewModel.SelectedItem = (Models.Model)select.DataContext;
+            var message = new MessageDialog("删除日记").ShowAsync();
+            diaryTextBoxDetail.Text = "";
+            if (ViewModel.SelectedItem != null)
+            {
+                if (ViewModel.SelectedItem.getId() != null)
+                {
+                    ViewModel.deleteItem(ViewModel.SelectedItem.getId());
+                }
+                ViewModel.SelectedItem = null;
+            }
+            BitmapImage temp = new BitmapImage(new Uri("ms-appx:///Assets/example.jpg"));
+            photoImageDetail.Source = temp;
+            moodTextBlockDetail.Text = "mood";
+            dateDatePickerDetail.Date = DateTimeOffset.Now;
+            diaryTextBoxDetail.Text = "";
+            feedbackTextBlock.Text = "feedback";
+            mediaElement.Source = null;
+            musicNameTextBlock.Text = "";
+            createButton.Content = "Create";
+            diaryTextBoxDetail.IsEnabled = true;
+        }
+
+        private void Share_Click(object sender, RoutedEventArgs e)
+        {
+            dynamic select = e.OriginalSource;
+            ViewModel.SelectedItem = (Model)select.DataContext;
+            if (ViewModel.SelectedItem != null)
+            {
+                DataTransferManager.ShowShareUI();
+            }
+        }
+
+        async void OnShareDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            var dp = args.Request.Data;
+            var deferral = args.Request.GetDeferral();
+            BitmapImage bitmapImage = new BitmapImage(ViewModel.SelectedItem.photoUri);
+            
+            var photoFile = await StorageFile.GetFileFromApplicationUriAsync(bitmapImage.UriSource);
+            var musicFile = await StorageFile.GetFileFromApplicationUriAsync(mediaElement.Source);
+            dp.Properties.Title = (string)ViewModel.SelectedItem.musicName;
+            dp.Properties.Description = (string)ViewModel.SelectedItem.diary;
+            dp.SetStorageItems(new List<StorageFile> { photoFile ,musicFile});
+            deferral.Complete();
         }
     }
 }

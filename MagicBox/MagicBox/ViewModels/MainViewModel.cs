@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using GalaSoft.MvvmLight;
 using MagicBox.Models;
+using MagicBox.Services;
 using SQLitePCL;
+using Windows.UI.Notifications;
 
 namespace MagicBox.ViewModels
 {
@@ -79,6 +82,8 @@ namespace MagicBox.ViewModels
             {
                 throw (ex);
             }
+
+            circulationUpdate();
         }
 
         public void updateItem(String id, Uri songUri, Uri photoUri, String mood, String diary, String feedback, String musicName)
@@ -121,6 +126,8 @@ namespace MagicBox.ViewModels
             {
                 throw (ex);
             }
+
+            circulationUpdate();
         }
 
         public void deleteItem(String id)
@@ -146,7 +153,28 @@ namespace MagicBox.ViewModels
             {
                 throw (ex);
             }
+
+            circulationUpdate();
         }
 
+        private void UpdatePrimaryTile(string input1, string input2, Uri uri)
+        {
+            var xmlDoc = LiveTileService.CreateTiles(new PrimaryTile(input1, input2, uri));
+            //var xmlDoc = TileService.CreateTiles(ViewModel.AllItems);
+
+            var updater = TileUpdateManager.CreateTileUpdaterForApplication();
+            TileNotification notification = new TileNotification(xmlDoc);
+            updater.Update(notification);
+        }
+
+        public void circulationUpdate()
+        {
+            TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            for (int i = 0; i < AllItems.Count(); i++)
+            {
+                //BitmapImage bitmap = (BitmapImage)ViewModel.AllItems[i].imgsource;
+                UpdatePrimaryTile(AllItems[i].musicName, AllItems[i].date.Date.ToString("yyyy-MM-dd"), AllItems[i].photoUri);
+            }
+        }
     }
 }

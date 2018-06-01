@@ -1,1 +1,0 @@
-C:\Users\zhangziquan\Source\Repos\UWP_MagicBox\MagicBox\MagicBox\MagicBox.csproj;x86
